@@ -1,48 +1,32 @@
+name: Python Application
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
 jobs:
-  build-windows:
-    runs-on: windows-latest
-    steps:
-      # Steps for Windows setup
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
-
-      - name: Set up and activate virtual environment on Windows
-        run: |
-          python -m venv venv
-          venv\Scripts\activate
-          pip install -r requirements.txt
-
-      - name: Start server and sleep
-        run: |
-          venv\Scripts\activate
-          make run &
-          timeout /t 10
-
-  build-ubuntu:
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      # Steps for Ubuntu setup
       - name: Checkout code
         uses: actions/checkout@v3
-
+        
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
 
-      - name: Set up and activate virtual environment on Ubuntu
-        run: |
-          python3 -m venv venv
-          source venv/bin/activate
-          pip install -r requirements.txt
+      # Install dependencies globally if needed, without using a virtual environment
+      - name: Install dependencies globally
+        run: pip install -r requirements.txt
 
       - name: Start server and sleep
         run: |
-          source venv/bin/activate
           make run &
           sleep 10
+
