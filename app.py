@@ -11,13 +11,13 @@ nltk.download('stopwords')
 
 app = Flask(__name__)
 
-# TODO: Fetch dataset, initialize vectorizer and LSA here
+# Fetch dataset, initialize vectorizer and LSA here
 newsgroups = fetch_20newsgroups(subset='all')
 documents = newsgroups.data
 vectorizer = TfidfVectorizer(stop_words=stopwords.words('english'), max_features=5000)
 tfidf_matrix = vectorizer.fit_transform(documents)
 svd = TruncatedSVD(n_components=200)  
-reduced_matrix = svd.fit_transform(tfidf_matrix)
+reducedMatrix = svd.fit_transform(tfidf_matrix)
 
 def search_engine(query):
     """
@@ -25,14 +25,14 @@ def search_engine(query):
     Input: query (str)
     Output: documents (list), similarities (list), indices (list)
     """
-    # TODO: Implement search engine here
-    query_vector = vectorizer.transform([query])
-    query_vector_reduced = svd.transform(query_vector)
-    similarities = cosine_similarity(query_vector_reduced, reduced_matrix)[0]
-    top_indices = similarities.argsort()[-5:][::-1]
-    top_similarities = similarities[top_indices]
-    top_documents = [documents[i] for i in top_indices]
-    return top_documents, top_similarities.tolist(), top_indices.tolist()
+    transformedQuery = vectorizer.transform([query])
+    reducedQueryVector = svd.transform(transformedQuery)
+    similarityScores = cosine_similarity(reducedQueryVector, reducedMatrix)[0]
+    bestMatchIndices = similarityScores.argsort()[-5:][::-1]
+    bestMatchScores = similarityScores[bestMatchIndices]
+    bestMatchDocuments = [documents[i] for i in bestMatchIndices]
+
+    return bestMatchDocuments, bestMatchScores.tolist(), bestMatchIndices.tolist()
 
 @app.route('/')
 def index():
