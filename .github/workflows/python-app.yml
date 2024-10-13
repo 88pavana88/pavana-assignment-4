@@ -36,3 +36,4 @@ jobs:
       - name: Verify server is running
         run: |
           curl -I http://localhost:3000
+
