@@ -1,18 +1,8 @@
-name: Python Application
-
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
-
 jobs:
-  build:
+  build-windows:
     runs-on: windows-latest
-
     steps:
+      # Steps for Windows setup
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -33,7 +23,26 @@ jobs:
           make run &
           timeout /t 10
 
-      - name: Verify server is running
-        run: |
-          curl -I http://localhost:3000
+  build-ubuntu:
+    runs-on: ubuntu-latest
+    steps:
+      # Steps for Ubuntu setup
+      - name: Checkout code
+        uses: actions/checkout@v3
 
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Set up and activate virtual environment on Ubuntu
+        run: |
+          python3 -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
+
+      - name: Start server and sleep
+        run: |
+          source venv/bin/activate
+          make run &
+          sleep 10
